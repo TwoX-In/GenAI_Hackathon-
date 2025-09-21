@@ -39,7 +39,7 @@ async def trial_classify_image(
     image: UploadFile = File(...)
 ) -> dict[str, str]:
     # Run classification that is hosted on the cloud 
-    url = os.getenv("GCP_CLASSIFIER_URL1") + "/classifier/trial_classify"
+    url = os.getenv("GCP_CLASSIFIER_URL") + "/classifier/trial_classify"
     logger.logger.info(f"CLASSIFIER URL: {url}")
     file_bytes=await image.read()
     # Reset file stream position for subsequent reads
