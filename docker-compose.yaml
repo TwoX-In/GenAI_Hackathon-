@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: artisan-backend
+    ports:
+      - "8000:8080"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/service-account-key.json
+    env_file:
+      - ./.env
+    volumes:
+      - ./credentials/service-account-key.json:/app/credentials/service-account-key.json:ro
+      - ./credentials/audio_gen.json:/app/credentials/audio_gen.json:ro
+      - ./credentials/token.json:/app/credentials/token.json:ro
+      - ./credentials/client_secret1.json:/app/credentials/client_secret1.json:ro
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/docs > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: artisan-frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE: "http://localhost:8081"
+    depends_on:
+      - backend
+    restart: unless-stopped

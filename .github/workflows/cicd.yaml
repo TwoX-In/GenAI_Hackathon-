@@ -1,0 +1,103 @@
+name: Build and Deploy to GCP
+
+on:
+  push:
+    branches:
+      - newbranch
+      - main
+
+jobs:
+  frontend:
+    name: Build & Deploy Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_CLOUD_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build Frontend Image
+        run: |
+          IMAGE="us-central1-docker.pkg.dev/${{ secrets.GCP_CLOUD_PROJECT_ID }}/containers/artisan-frontend:latest"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          docker build \
+            --build-arg VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }} \
+            -t "$IMAGE" ./frontend
+
+
+      - name: Push Frontend Image
+        run: docker push "$IMAGE"
+
+      - name: Deploy Frontend to Cloud Run
+        run: |
+          gcloud run deploy artisan-frontend \
+            --image "$IMAGE" \
+            --region us-central1 \
+            --platform managed \
+            --project "${{ secrets.GCP_CLOUD_PROJECT_ID }}" \
+            --set-env-vars VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }} \
+            --allow-unauthenticated \
+            --timeout 300s
+
+  backend:
+    name: Build & Deploy Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_CLOUD_PROJECT_ID }}
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build Backend Image
+        run: |
+          IMAGE="us-central1-docker.pkg.dev/${{ secrets.GCP_CLOUD_PROJECT_ID }}/containers/artisan-backend:latest"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          docker build -t "$IMAGE" ./backend
+
+      - name: Push Backend Image
+        run: docker push "$IMAGE"
+
+      - name: Deploy Backend to Cloud Run with Secret Manager
+        run: |
+          gcloud run deploy artisan-backend \
+            --image "$IMAGE" \
+            --region us-central1 \
+            --platform managed \
+            --project "${{ secrets.GCP_CLOUD_PROJECT_ID }}" \
+            --allow-unauthenticated \
+            --memory 8Gi \
+            --cpu 2 \
+            --timeout 2500s \
+            --set-secrets YOUTUBE_CLIENT_SECRET=YOUTUBE_CLIENT_SECRET:latest \
+            --set-secrets YOUTUBE_TOKEN=YOUTUBE_TOKEN:latest \
+            --set-secrets GCP_CLOUD_PROJECT_ID=GCP_CLOUD_PROJECT_ID:latest \
+            --set-secrets GCP_CLOUD_PROJECT_LOCATION=GCP_CLOUD_PROJECT_LOCATION:latest \
+            --set-secrets GCP_SA_KEY=GCP_SA_KEY:latest \
+            --set-secrets NANO_BANANAS_API_KEY=NANO_BANANAS_API_KEY:latest \
+            --service-account artisangenai@artisan-image-gen.iam.gserviceaccount.com \
+            --set-secrets GCP_CLASSIFIER_URL=GCP_CLASSIFIER_URL:latest \
+            --set-env-vars AGENT_URL=${{ secrets.AGENT_URL }}

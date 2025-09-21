@@ -1,0 +1,32 @@
+backend/lib
+backend/bin
+backend/venv
+chrome-extension
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+.extension/
+backend/init/app.db
+
+credentials/

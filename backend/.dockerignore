@@ -1,0 +1,30 @@
+# Python cache and virtualenv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+.env
+.venv
+venv/
+
+# Git and build files
+.git
+.gitignore
+.DS_Store
+
+# Local data & db
+init/app.db
+
+# Node stuff (if present)
+node_modules
+dist
+build
+
+# Large media files
+*.mp4
+*.zip
+*.csv
+*.jpg
+*.png
