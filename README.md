@@ -42,6 +42,7 @@ Artisan Assistant is a comprehensive platform that empowers artisans and craftsp
 - **REST API**: FastAPI-based backend with comprehensive endpoints
 - **Chrome Extension**: Browser extension for enhanced functionality
 - **Mobile Support**: Responsive design for mobile and tablet devices
+- **Instructions Page**: Friendly, step-by-step guide for asset creation with quirky, helpful tone
 
 ## 🏗️ Architecture
 
@@ -72,6 +73,32 @@ Before you begin, ensure you have the following installed:
 - **Docker** (optional, for containerized deployment)
 - **Google Cloud Account** (for AI services)
 - **Git**
+
+## 🎨 Quick Start Guide
+
+### How to Create Your First Asset
+
+Ready to turn your creative vision into reality? Here's how to get started with asset creation:
+
+1. **Click the "Create Asset" Button** 🎯
+   - Head to the main page and hit that beautiful "Create Asset" button
+   - Make sure you're logged in first to save your amazing creations!
+
+2. **Fill in Your Details** 📝
+   - Upload your reference image (we recommend using photos from [memeraki.com](https://memeraki.com) for testing - it works like a charm!)
+   - Describe what you want to create and your preferences
+   - The more details, the better the result!
+
+3. **Wait for the Magic** ⏰
+   - Asset generation typically takes 5-10 minutes
+   - Grab a coffee, stretch your legs, or work on another project while you wait
+   - We'll notify you when it's ready!
+
+4. **Enjoy Your Creation!** 🎉
+   - Download, share, or use your custom asset in projects
+   - We're pretty proud of what our AI can create!
+
+> 💡 **Pro Tip**: For the best results, use high-quality reference images and be specific in your descriptions. Good art takes time, so patience is key!
 
 ## 🚀 Installation
 
@@ -369,6 +396,3 @@ If you encounter any issues or have questions:
 ---
 
 **Made with ❤️ for the artisan community**
-### Data Flow Diagram
-
-![Data Flow Diagram](./dfd.svg)
